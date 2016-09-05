@@ -1,0 +1,17 @@
+{% load static %}
+
+
+{% if latest_goods_list %}
+	<url>
+	{% for goods in latest_goods_list %}
+		<li>
+			
+			{{ goods.goods_title }} -- {{ goods.goods_subject }} --- {{ goods.goods_price }}元/个---
+			<a href="{% url 'alipayModel:buy' goods.id %}">Buy it</a>
+		</li>
+
+	{% endfor %}
+	</url>
+{% else %}
+	<p>No Goods are available.</p>
+{% endif %}
