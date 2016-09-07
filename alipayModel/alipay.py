@@ -27,7 +27,7 @@ class alipay:
             self.conf={
               'partner'         :   partner,
               #'service'         :   "create_direct_pay_by_user",
-              'service'         :   "alipay.trade.wap.pay",
+              'service'         :   "alipay.wap.trade.create.direct",
               'payment_type'    :   "1",
               'seller_email'    :   sellermail,
               'notify_url'      :   notifyurl,
@@ -105,8 +105,8 @@ class alipay:
         body        :订单备注、描述
         total_fee   :总额
     '''
-    def createPayForm(self,params,method="GET",title="确认，支付宝付款"):
-        #Python 字典(Dictionary) update() 函数把字典dict2的键/值对更新到dict里。target='_blank'
+    def createPayForm(self,params,method="POST",title="确认，支付宝付款"):
+        #Python 字典(Dictionary) update() 函数把字典dict2的键/值对更新到dict里。
         params.update(self.conf)
 
         sign=self.buildSign(params)
@@ -121,7 +121,7 @@ class alipay:
             continue
           ele = ele + " <input type='hidden' name='%s' value='%s' />" % (k,params[k])
           html='''
-            <form name='alipaysubmit' action='%s?_input_charset=%s' method='%s' >
+            <form name='alipaysubmit' action='%s?_input_charset=%s' method='%s' target='_blank'>
                 %s
                 <input type="submit" value="%s" />
             </form>
