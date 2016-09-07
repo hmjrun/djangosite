@@ -6,13 +6,13 @@ from . import alipay
 # Create your views here.
 alipayTool=alipay.alipay(  
 				#支付宝身份ID
-                partner="2088602194107972",  
+                partner="2088121136801926",  
                 #支付宝生成的key
-                key="1qaf59llmya5ozg50gkj0cn0a4um252r",  
+                key="j57lno9gjeegqu3vazgwred8689vuazi",  
                 #商家支付宝帐号（邮箱）
-                sellermail="hmj1993100829@163.com",  
-                notifyurl="http://www.mjcode.cn",  
-                returnurl="http://www.mjcode.cn",  
+                sellermail="zhangshuo@hanyunhk.cn",  
+                notifyurl="http://www.mjcode.cn:8080/alipayModel/notifyUrl",  
+                returnurl="http://www.mjcode.cn:8080/alipayModel/returnUrl",  
                 showurl="http://www.mjcode.cn"  
                 )
 

@@ -11,8 +11,9 @@ verfyURL={
     "https":"https://www.alipay.com/cooperate/gateway.do?service=notify_verify",
     "http" :"http://notify.alipay.com/trade/notify_query.do?",
     }
-gateway="https://www.alipay.com/cooperate/gateway.do"
-
+#gateway="https://www.alipay.com/cooperate/gateway.do"
+#gateway="https://mapi.alipay.com/gateway.do"
+gateway = "https://openapi.alipay.com/gateway.do"
 class alipay:
     def __init__(self,
                  partner="您的淘宝身份",
@@ -25,13 +26,14 @@ class alipay:
             self.key=key;
             self.conf={
               'partner'         :   partner,
-              'service'         :   "create_direct_pay_by_user",
+              #'service'         :   "create_direct_pay_by_user",
+              'service'         :   "alipay.trade.wap.pay",
               'payment_type'    :   "1",
               'seller_email'    :   sellermail,
               'notify_url'      :   notifyurl,
               'return_url'      :   returnurl,
               'show_url'        :   showurl,
-              '_input_charset'  :   "UTF-8",
+              '_input_charset'  :   "utf-8",
               'sign_type'       :   "MD5",
               #其他参数，如果有默认值定义在下面：
               'paymethod'       :   "",
@@ -56,7 +58,7 @@ class alipay:
         
 
     def buildSign(self,params):
-        sign=hashlib.md5((self.populateURLStr(params)+self.key).encode('UTF-8')).hexdigest()
+        sign=hashlib.md5((self.populateURLStr(params)+self.key).encode('utf-8')).hexdigest()
         print ("md5 sign is %s" % sign)
         return sign
     
@@ -103,21 +105,23 @@ class alipay:
         body        :订单备注、描述
         total_fee   :总额
     '''
-    def createPayForm(self,params,method="POST",title="确认，支付宝付款"):
+    def createPayForm(self,params,method="GET",title="确认，支付宝付款"):
+        #Python 字典(Dictionary) update() 函数把字典dict2的键/值对更新到dict里。target='_blank'
         params.update(self.conf)
+
         sign=self.buildSign(params)
         params['sign']=sign
         
         ele=""
-        for nm in params:
-           
-            print ("key in params : %s"%nm)
-            
-            if params[nm]==None or len(params[nm])==0 or nm=='_input_charset':
-                continue
-            ele = ele + " <input type='hidden' name='%s' value='%s' />" % (nm,params[nm])
-        html='''
-            <form name='alipaysubmit' action='%s?_input_charset=%s' method='%s' target='_blank'>
+        ks = params.keys()
+        ks = sorted(ks)
+        for k in ks:
+          print ("key in params : %s"%k)
+          if params[k]==None or len(params[k])==0 :
+            continue
+          ele = ele + " <input type='hidden' name='%s' value='%s' />" % (k,params[k])
+          html='''
+            <form name='alipaysubmit' action='%s?_input_charset=%s' method='%s' >
                 %s
                 <input type="submit" value="%s" />
             </form>
