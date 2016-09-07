@@ -28,7 +28,7 @@ class alipay:
               'partner'         :   partner,
               #'service'         :   "create_direct_pay_by_user",
               #'service'         :   "alipay.wap.trade.create.direct",
-              'service'         :   "alipay.trade.wap.pay"
+              'service'         :   "alipay.trade.wap.pay",
               'payment_type'    :   "1",
               'seller_email'    :   sellermail,
               'notify_url'      :   notifyurl,
