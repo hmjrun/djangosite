@@ -12,8 +12,8 @@ verfyURL={
     "http" :"http://notify.alipay.com/trade/notify_query.do?",
     }
 #gateway="https://www.alipay.com/cooperate/gateway.do"
-#gateway="https://mapi.alipay.com/gateway.do"
-gateway = "https://openapi.alipay.com/gateway.do"
+gateway="https://mapi.alipay.com/gateway.do"
+#gateway = "https://openapi.alipay.com/gateway.do"
 class alipay:
     def __init__(self,
                  partner="您的淘宝身份",
