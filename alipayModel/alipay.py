@@ -17,6 +17,7 @@ gateway="https://mapi.alipay.com/gateway.do"
 class alipay:
     def __init__(self,
                  partner="您的淘宝身份",
+                 #app_id="app_id",
                  key="您的淘宝Key",
                  sellermail="卖家邮箱",
                  notifyurl="异步通知回调URL",
@@ -26,16 +27,17 @@ class alipay:
             self.key=key;
             self.conf={
               'partner'         :   partner,
+              'seller_id'       :   partner,
               'service'         :   "alipay.wap.create.direct.pay.by.user",
               #'service'         :   "alipay.wap.trade.create.direct",
               #'service'         :   "alipay.trade.wap.pay",
+              #'method'          :  "alipay.trade.wap.pay",
               'payment_type'    :   "1",
-              'seller_email'    :   sellermail,
               'notify_url'      :   notifyurl,
               'return_url'      :   returnurl,
               'show_url'        :   showurl,
-              '_input_charset'  :   "utf-8",
-              'sign_type'       :   "MD5",
+              '_input_charset'  :   "utf-8", 
+              'sign_type'       :   "MD5",        
               #其他参数，如果有默认值定义在下面：
               'paymethod'       :   "",
               'mainname'        :   "",

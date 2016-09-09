@@ -2,12 +2,28 @@
 
 
 {% if latest_goods_list %}
+	<hr>
+	<p>buy_old_MD5 :</p>
+	<hr>
 	<url>
 	{% for goods in latest_goods_list %}
 		<li>
 			
 			{{ goods.goods_title }} -- {{ goods.goods_subject }} --- {{ goods.goods_price }}元/个---
 			<a href="{% url 'alipayModel:buy' goods.id %}">Buy it</a>
+		</li>
+
+	{% endfor %}
+	</url>
+	<hr>
+	<p>buy_new_RSA :</p>
+	<hr>
+	<url>
+	{% for goods in latest_goods_list %}
+		<li>
+			
+			{{ goods.goods_title }} -- {{ goods.goods_subject }} --- {{ goods.goods_price }}元/个---
+			<a href="{% url 'alipayModel:buy_rsa' goods.id %}">Buy it</a>
 		</li>
 
 	{% endfor %}
