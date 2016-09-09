@@ -163,8 +163,11 @@ class alipay_rsa:
 
         #签名RSA
         sign=self.sign_rsa(wait_sign_str)
+        #print ("sign: " + str(sign)
+        s1 = sign[:-1]
+        s2 = s1[2:]
 
-        self.conf['sign']=sign
+        self.conf['sign']=s2
         
         rlt=''
         for k in self.conf:

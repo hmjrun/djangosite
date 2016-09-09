@@ -72,7 +72,7 @@ def buy_rsa(request,goods_id):
 		trade_body		=	params['body'],
 		trade_total_fee	=	params['total_amount'])
 
-	return HttpResponse("<a href="+alipayToolRsa.createPayForm(params)+">comfirm pay by alipay<a>")
+	return HttpResponse('''<a href="'''+alipayToolRsa.createPayForm(params)+'''">comfirm pay by alipay<a>''')
 
 def notifyUrl(request):
 	rlt=alipayTool.notifiyCall(f,verify=True)  
