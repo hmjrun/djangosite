@@ -11,7 +11,7 @@ alipayTool = alipay.alipay(
 				#支付宝身份ID
                 partner="2088121136801926",  
                 #支付宝生成的key
-                key="j57lno9gjeegqu3vazgwred8689vuazi",  
+                key="",  
                 #商家支付宝帐号（邮箱）
                 #sellermail="zhangshuo@hanyunhk.cn",  
                 #"seller_id"="2088121136801926"
