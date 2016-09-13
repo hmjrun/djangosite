@@ -4,6 +4,8 @@ import cgi, base64
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA
+from Crypto.Hash import SHA256
+from base64 import b64encode, b64decode
 import hashlib
 import urllib
 import time
@@ -15,51 +17,17 @@ sign_data = sign(raw_data)
 print ("sign_data: %s"%sign_data)
 print (verify(raw_data, sign_data))
 '''
-    #私钥文件
+  #私钥文件
 priKey = '''-----BEGIN RSA PRIVATE KEY-----
-  MIIEogIBAAKCAQEAmJHsvCthyyTN0O4Np4SybXreeOH1qIZVLjj63HnyAL9YZ0SJ
-  ROKPV3k/BYnVw2xcJAQtryUq8zsaoavcuNvdIUoqQs18GGlcDCcVpbFUAgMa6nSF
-  fph+TMusxhLfWk5Evcm9LBkRaNb1RHGeEwn802nkDW/KWDwCh/JUl/izWmk/aP9r
-  Zs3++ItIBwVtgdgcBe7r6HNCDL761lh91wkPwdJtQgS1NE6OArQlhcUVIBr56wTI
-  jXj1ijHLiDC3ie3Hhz5ylz/f3SxmR0vKgkLcAN+6OuIh5IAjpoZb9MJeTRO39sAb
-  XbIb5mV7uYvpi5icHDt38gXTceuPZvkm6RZ68QIDAQABAoIBAFxzqLHJ1APGdJWT
-  e2C0j266Es/LlRIe/MT6sEEkABql2IsTQ98jLttB1Ielo4w9QIRup8RHUIR9n0Cy
-  pRi72n7Os1cxr24Xgji3Am4aS57AhPHn0/EHtRkSHssUKpZNcWhUNDbhpeQSxiNI
-  ehJtbfAqbZAa2tGm452/obVJdl1lE/wF7KiOap/7DijnOaci3iJhSg9xinN1GtjU
-  pvD4I1hydSF23Ls47J9M/QhPnLa3FidRwwrxJDLIZf/0qh9gIfaxRpa3yZsVG+sP
-  PGCrrxS10W3ek5hu28OGhr7TO9sttO14bjPkAyBe+dusDy91D3qw9+uddXbM7uv/
-  pJBSmnUCgYEAyjgsSFSjzXhvqT6Zjfo5GdoG9jSj77J03w2wXaWtQppGdAdpRHVe
-  YE439wYkLfocv4y3dBrkCbltaJQyOujQ25qF9tAgX6t/BPR7F6mxYxdIqdw9HCAD
-  GpcDpSgfNgqY+2Bx6FAsveP+ZtESWEiLIjbQpACpq9NqaR1xxsn9AMMCgYEAwSVw
-  9m8bPKS33RRp7D1MhuXy2eHQGI48eqxNi2PVDaiJnEmRqQIY87uASSbg+n95i69q
-  cfx46Un/eWp/aU9GspLR1bWjbXs+ZSHURFuZzxVatpacZqD8aXzTA2XdaFvKTVSD
-  QRJDlu1kx2Tp8iOqDLEaYzuXssKEYyqDIvxGmjsCgYAy7jbo+LhQtbaZz7Ro986N
-  3kXGmLd5VV7uFsqGq4WZsrVv37X5kf31D3407w0Jr2ayL8S8r1EjydnubvS/tYd0
-  59Q5t22P6ueQ3epqqUiOBn08msWhYcamWcaHQDWsLLsfBMlrk1XRdazLRHj0V0ED
-  mv6tb6VMK3EvjETtpk3cdQKBgDECxTVjYC/1REqvQWmW7HJWq1cqe9mfTi16x3qV
-  bJy4paKo8HNIevhuHdFyMiiebENL0eD2xd+8zT0MDySz3ya1JtXp73x6h4y2Ftz5
-  uX/Y1Vn7wdgxBZvm9syn7pTqpd0VkvDSJ6CGwMnwC4VME3yA/Ect+gJ8ZYecZAZe
-  qbO9AoGADU4cOzon1iR/Dtluec6e4cBFa9PssVuhAKVGXHjfoopX6U4/zrR3K1+R
-  OtAmBeQVqXeuI7sd/7eDoI41FkfM3bIxgIq256EcJF6ZSYYi9lhISNWieEft/bN4
-  UjTLRc/D8LQtvyE7fCyH3bKFlH3aabrPteDSlgpDdqqHaWMmEBU=
-  -----END RSA PRIVATE KEY-----'''
+MIICXgIBAAKBgQDJEKdiQyuOhXWsTGZCiLIJ0pqAhOLMiKIsZbMV0DGSNRbIADRTBM/SVP7PIWfoYgZjrMxoqKjfaOVx/nCMVLoqLpwSjp0BCWA92rFTxHhH4AfymlHSslvvmj5/sqfsssLY3gVuD/cLIR+ZTuehIHA8j7TMkldAUbSbXJyaVtIKWwIDAQABAoGAXRzXR0wwCaqImigvWzSOrrnXTxk7JtlHsSPP0ZQ+wKTRTgG6OZAK5i7yad3gjt+GcfZ+GyGwQvYC+82HNZWvODJUVFSut+Q6735DMm+kKPwubZfvA2VRVySYrVBSapAbU7nggV9PAJMa6ZuQZzfjFRHTrMuBpDeM/UOLOymjOVECQQD8cCcY9akZa1wjOYwg2dg2lqpiyr+V0l9B87y00WdTBXogyoXWTjszpwHiyAyyDwxPk/Gv5LMKsyngAL5mvYPvAkEAy+bu8W+RIo8kV6zQESZZ7j4idYk9Wc1taHAhEPh9SfYwa9kVzyPYU/FfpYgIBVy+Xw+1wsvDELVR1ZwoJgKEVQJBAOciMUozND9oA5blDB7QF53z2dJW3ZBqbHnQl8nfqgFkFGyNwnl0a9RhZ+KjVKx8BsOeLD7m4eA8J21IgQ1FHNUCQQCMjDQr69FI1w4f+Ri6mYrns6ChD+ZgHj/J+3BveDk0YCRkUpC75WNaCUj6mtecip8We4e4LCfbPoCYEzmBab65AkEAnSlxB4Gz92Co5ky4a5T/FIjp6xya7DGt+B/176J0Gz2oDePUJc0Wr3kgiYOYLYGKoYmQi1+rbrcapQWEXflsSQ==
+-----END RSA PRIVATE KEY-----'''
 
   #公钥文件
-pubKey = '''-----BEGIN PUBLIC KEY-----
-  MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmJHsvCthyyTN0O4Np4Sy
-  bXreeOH1qIZVLjj63HnyAL9YZ0SJROKPV3k/BYnVw2xcJAQtryUq8zsaoavcuNvd
-  IUoqQs18GGlcDCcVpbFUAgMa6nSFfph+TMusxhLfWk5Evcm9LBkRaNb1RHGeEwn8
-  02nkDW/KWDwCh/JUl/izWmk/aP9rZs3++ItIBwVtgdgcBe7r6HNCDL761lh91wkP
-  wdJtQgS1NE6OArQlhcUVIBr56wTIjXj1ijHLiDC3ie3Hhz5ylz/f3SxmR0vKgkLc
-  AN+6OuIh5IAjpoZb9MJeTRO39sAbXbIb5mV7uYvpi5icHDt38gXTceuPZvkm6RZ6
-  8QIDAQAB
-  -----END PUBLIC KEY-----'''
+pubKey = '''-----BEGIN PUBLIC KEY-----MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCe8QkU8a/AUKWu1vc5PRoKYnNnul2+B6RES0ZdBR7P+oL0tfia700OEVgPnSgRpQRiDG+aAt+H1R2mSd8FM/e2OWoB42jux+1Ex8aoyjSaZKjR55N6vTmwCZuEzn2d3aX38ncYTzWQIoUwvf2vujQ7E5ixBXu2R2YvSpzJne7bvwIDAQAB-----END PUBLIC KEY-----'''
 
   #alipay_pub_key
-alipay_pub_key = '''MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d
-  306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4
-  HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV
-  9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB'''
+alipay_pub_key = '''MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB'''
+
 verfyURL={
     "https":"https://www.alipay.com/cooperate/gateway.do?service=notify_verify",
     "http" :"http://notify.alipay.com/trade/notify_query.do?",
@@ -77,13 +45,12 @@ class alipay_rsa:
             self.conf={
               'app_id'          :   app_id,
               'method'          :  "alipay.trade.wap.pay",
-              'payment_type'    :   "1",
               'charset'         :   "utf-8", 
               'sign_type'       :   "RSA",
               'version'         :   "1.0",
               'timestamp'       :   timestamp,
-              'notify_url'      :   notifyurl,
-              'return_url'      :   returnurl,   
+              #'notify_url'      :   notifyurl,
+              #'return_url'      :   returnurl,   
               #其他参数，如果有默认值定义在下面：
 
               }
@@ -100,8 +67,8 @@ class alipay_rsa:
                 or k=="sign" or k=="sign_type" or k=="key":
                 continue
             rlt=rlt+"&%s=%s"%(k,params[k])
-        url = "URL:"+rlt[1:]
-        print(url)
+        #url = "URL:"+rlt[1:]
+        #print(url)
         return rlt[1:]
         
 
@@ -163,28 +130,41 @@ class alipay_rsa:
 
         #签名RSA
         sign=self.sign_rsa(wait_sign_str)
-        #print ("sign: " + str(sign)
-        s1 = sign[:-1]
-        s2 = s1[2:]
+      
 
-        self.conf['sign']=s2
+        self.conf['sign']=sign
+       
+        ele=""
+        ks = self.conf.keys()
+        ks = sorted(ks)
+       
+        for k in ks:
+          if self.conf[k]==None or len(self.conf[k])==0 :
+            continue
+          ele = ele + " <input type='hidden' name='%s' value='%s' />" % (k,self.conf[k])
+          html='''
+            <form name='alipaysubmit' action='%s' method='%s' target='_blank'>
+                %s
+                <input type="submit" value="%s" />
+            </form>
+            ''' % (gateway,method,ele,title)
+        return html
         
-        rlt=''
-        for k in self.conf:
-            if self.conf[k]==None or len(self.conf[k])==0:
-                continue
-            rlt=rlt+"&%s=%s"%(k,self.conf[k])
-        full_url = gateway + "?" + rlt
-        print ("full_url: " + full_url)
-        return full_url
 
     def sign_rsa(self, data):
       key = RSA.importKey(priKey)
       h = SHA.new(data.encode('utf-8'))
       signer = PKCS1_v1_5.new(key)
       signature = signer.sign(h)
-      return base64.b64encode(signature)
+      return base64.b64encode(signature).decode('utf-8')
 
+    def sign2(self, data):
+      reskey = RSA.importKey(priKey)
+      signer = PKCS1_v1_5.new(reskey)
+      digest = SHA256.new()
+      digest.update(b64decode(data))
+      sign = signer.sign(digest)
+      return b64encode(sign).decode('utf-8')
 
 
 

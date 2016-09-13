@@ -1,9 +1,11 @@
 from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse
 from .models import Goods,Record_trade
+from collections import OrderedDict
 import time
 from . import alipay
 from . import alipay_rsa
+import json
 # Create your views here.
 alipayTool = alipay.alipay(  
 				#支付宝身份ID
@@ -39,6 +41,7 @@ def buy(request,goods_id):
 	goods = get_object_or_404(Goods,pk=goods_id)
 
 	trade_no = time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
+
 	params = {
 		'out_trade_no' 	: 	trade_no,
 		'subject' 		: 	goods.goods_subject,
@@ -57,22 +60,42 @@ def buy(request,goods_id):
 def buy_rsa(request,goods_id):
 	goods = get_object_or_404(Goods,pk=goods_id)
 	out_trade_no = time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
-	params = {
-		'body'			: 	goods.goods_subject,
-		'subject'		:	"this is Test buy use alipay by rsa",
-		'out_trade_no' 	: 	out_trade_no,
-		'total_amount'	:	goods.goods_price,
-		'product_code'	:	"QUICK_WAP_PAY"
-
+	
+	z = {
+		'body':goods.goods_subject,
+		'subject':'this is Test buy use alipay by rsa',
+		'out_trade_no':out_trade_no,
+		'total_amount':goods.goods_price,
+		'seller_id':'2088121136801926',
+		'product_code':'QUICK_WAP_PAY'
 	}
 
-	r = Record_trade.objects.create(
-		out_trade_no	=	params['out_trade_no'],
-		trade_subject	=	params['subject'],
-		trade_body		=	params['body'],
-		trade_total_fee	=	params['total_amount'])
+	p = OrderedDict(z)
 
-	return HttpResponse('''<a href="'''+alipayToolRsa.createPayForm(params)+'''">comfirm pay by alipay<a>''')
+	
+
+	params = OrderedDict(sorted(z.items(), key=lambda t: t[0]))
+	# r = Record_trade.objects.create(
+	# 	out_trade_no	=	params['out_trade_no'],
+	# 	trade_subject	=	params['subject'],
+	# 	trade_body		=	params['body'],
+	# 	trade_total_fee	=	params['total_amount'])
+	pp = json.dumps(params)
+	url = alipayToolRsa.createPayForm(pp)
+
+	# context = {
+	# 	'app_id'	:	alipayToolRsa.conf['app_id'],
+	# 	'method'	:	alipayToolRsa.conf['method'],
+	# 	'charset'	:	alipayToolRsa.conf['charset'],
+	# 	'sign_type'	:	alipayToolRsa.conf['sign_type'],
+	# 	'timestamp'	:	alipayToolRsa.conf['timestamp'],
+	# 	'biz_content':	alipayToolRsa.conf['biz_content'],
+	# 	'sign'		:	alipayToolRsa.conf['sign'],
+	# 	'version'	:	alipayToolRsa.conf['version'],
+	# }
+	return HttpResponse(url)
+	#return HttpResponse('''<a href="'''+url+'''">confirm</a>''')
+	#return render(request,'alipayModel/comfirm_pay.html',context)
 
 def notifyUrl(request):
 	rlt=alipayTool.notifiyCall(f,verify=True)  
