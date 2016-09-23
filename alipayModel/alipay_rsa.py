@@ -23,7 +23,9 @@ MIICXgIBAAKBgQDJEKdiQyuOhXWsTGZCiLIJ0pqAhOLMiKIsZbMV0DGSNRbIADRTBM/SVP7PIWfoYgZj
 -----END RSA PRIVATE KEY-----'''
 
   #公钥文件
-pubKey = '''-----BEGIN PUBLIC KEY-----MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCe8QkU8a/AUKWu1vc5PRoKYnNnul2+B6RES0ZdBR7P+oL0tfia700OEVgPnSgRpQRiDG+aAt+H1R2mSd8FM/e2OWoB42jux+1Ex8aoyjSaZKjR55N6vTmwCZuEzn2d3aX38ncYTzWQIoUwvf2vujQ7E5ixBXu2R2YvSpzJne7bvwIDAQAB-----END PUBLIC KEY-----'''
+pubKey = '''-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCe8QkU8a/AUKWu1vc5PRoKYnNnul2+B6RES0ZdBR7P+oL0tfia700OEVgPnSgRpQRiDG+aAt+H1R2mSd8FM/e2OWoB42jux+1Ex8aoyjSaZKjR55N6vTmwCZuEzn2d3aX38ncYTzWQIoUwvf2vujQ7E5ixBXu2R2YvSpzJne7bvwIDAQAB
+-----END PUBLIC KEY-----'''
 
   #alipay_pub_key
 alipay_pub_key = '''MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB'''
@@ -152,6 +154,7 @@ class alipay_rsa:
         
 
     def sign_rsa(self, data):
+      
       key = RSA.importKey(priKey)
       h = SHA.new(data.encode('utf-8'))
       signer = PKCS1_v1_5.new(key)

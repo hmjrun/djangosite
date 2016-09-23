@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404,render
 # Create your views here.
 from django.http import HttpResponseRedirect,HttpResponse
 #from django.template import loader
-from django.urls import reverse
+#from django.urls import reverse
 from django.views import generic
 from .models import Chioce,Question
 
@@ -64,4 +64,4 @@ def vote(request,question_id):
 	else:
 		selected_choice.votes += 1
 		selected_choice.save()
-		return HttpResponseRedirect(reverse('polls:results',args=(question.id,)))
+		#return HttpResponseRedirect(reverse('polls:results',args=(question.id,)))
