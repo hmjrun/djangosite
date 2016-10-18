@@ -9,7 +9,7 @@ class Entry(models.Model):
 	user 	 = 	models.ForeignKey(User)
 	pub_date = 	models.DateTimeField(default=now)
 	title 	 = 	models.CharField(max_length = 200)
-	#当你看见当下网页url后面出现a-b-c-d-f类似的字符串，就是被slugify了
+	
 	slug 	 = 	models.SlugField()
 	body 	 = 	models.TextField()
 
