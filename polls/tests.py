@@ -19,3 +19,4 @@ class QuestionModelTests(TestCase):
 		#We then check the output of was_published_recently() 
 		#- which ought to be False.
 		self.assertIs(future_question.was_published_recently(),False)
+123423
