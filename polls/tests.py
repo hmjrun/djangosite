@@ -6,7 +6,7 @@ from django.utils import timezone
 from .models import Question
 1323456
 
-local change
+local changed
 class QuestionModelTests(TestCase):
 
 	def test_was_published_recently_with_future_question(self):
