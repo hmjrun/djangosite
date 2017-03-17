@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+STATIC_ROOT = os.path.join(BASE_DIR,"static/")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',#shell_plus
     'test_tastypie',
     'tastypie',
+    'alipay_py',
 ]
 
 MIDDLEWARE = [
@@ -91,8 +93,18 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 #         'PASSWORD':'abcd.1234',
 #         'HOST':'127.0.0.1',
 #         'PORT':'3306',
-#     }
+#     }:@localhost/
 # }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'gfloor_debug',
+        'USER': 'gfloor',
+        'PASSWORD': 'gfloor.18',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
 
 
 # Password validation
@@ -119,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

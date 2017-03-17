@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect,HttpResponse
 #from django.template import loader
 #from django.urls import reverse
 from django.views import generic
-from .models import Chioce,Question
+from .models import Chioce,Question,Order
 
 class IndexView(generic.ListView):
 	template_name = 'polls/index.html'
@@ -65,3 +65,43 @@ def vote(request,question_id):
 		selected_choice.votes += 1
 		selected_choice.save()
 		#return HttpResponseRedirect(reverse('polls:results',args=(question.id,)))
+
+
+def take_order(request):
+	return render(request,'hy_order_dishes/index.html',)
+
+
+from django.http  import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def take_order_data(request):
+	orders = Order.objects.all()
+	results = []
+	for order in orders:
+		s = {}
+		s['weekday'] = order.weekday
+		s['point'] = [order.point_x,order.point_y]
+		results.append(s)
+	return JsonResponse({'orders':results})
+
+@csrf_exempt
+def save_order(request):
+	try:
+		this_day_orders = request.POST.get('list_poits')
+		points = this_day_orders.split(",")
+		print (points)
+		import datetime
+		d=datetime.datetime.now()
+		if len(points) > 0:
+			for i in range(0,len(points)):
+				if i%2==0:
+					Order.objects.create(weekday=d.weekday()+1,point_x=points[i],point_y=points[i+1],order_date=d)
+			return JsonResponse({'state':"ok"})
+		else:
+			return JsonResponse({'state':"no"})
+	except Exception as e:
+		print (e)
+		raise e
+
+

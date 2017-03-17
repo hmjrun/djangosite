@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>点菜V1.0</title>
+ 
+ <style>
+     canvas {
+       cursor: pointer;
+       border: 1px solid black;
+     }
+ </style>
+ <script>
+    // 这个方法用来储存每个圆圈对象
+    function Circle(x, y, is_now,radius, color) {
+      this.x = x;
+      this.y = y;
+      this.is_now = is_now;// 1:今天，０：历史
+      this.radius = radius;
+      this.color = color;
+      this.isSelected = false;
+    }
+ 
+    // 保存画布上所有的圆圈
+    var circles = [];
+ 
+    var canvas;
+    var context;
+ 
+    window.onload = function() {
+      canvas = document.getElementById("canvas");
+      context = canvas.getContext("2d");
+ 
+      canvas.onmousedown = canvasClick;
+      canvas.onmouseup = stopDragging;
+      canvas.onmouseout = stopDragging;
+      canvas.onmousemove = dragCircle;
+    };
+
+    function randomOne(){
+        var x = randomFromTo(0, canvas.width);
+        var y = randomFromTo(0, canvas.height);
+        addRandomCircle(x,y,1);
+    }
+
+    function addRandomCircle(x,y,is_now,color) {
+      // 为圆圈计算一个随机大小和位置
+      var radius = 14//
+      var colors = ["green", "green", "blue", "red", "yellow","orange", "brown", "purple", "pink","magenta"];
+      if (typeof(color)=="undefined"){
+        color = "pink"// today order
+      }else{
+        color = colors[color]; //history
+      }
+      // 创建一个新圆圈
+      var circle = new Circle(x, y, is_now, radius, color);
+ 
+      // 把它保存在数组中
+      circles.push(circle);
+ 
+      // 重新绘制画布
+      drawCircles();
+    }
+ 
+    function clearCanvas() {
+      // 去除所有圆圈
+      circles = [];
+      // 重新绘制画布.
+      drawCircles();
+    }
+ 
+    function drawCircles() {
+      // 清除画布，准备绘制
+      context.clearRect(0, 0, canvas.width, canvas.height);
+ 
+      // 遍历所有圆圈
+      for(var i=0; i<circles.length; i++) {
+        var circle = circles[i];
+ 
+        // 绘制圆圈
+        context.globalAlpha = 0.85;
+        context.beginPath();
+        context.arc(circle.x, circle.y, circle.radius, 0, Math.PI*2);
+        context.fillStyle = circle.color;
+        context.fillText = "５"
+        context.strokeStyle = "black";
+ 
+        if (circle.isSelected) {
+          context.lineWidth = 5;
+        }
+        else {
+          context.lineWidth = 1;
+        }
+        context.fill();
+        context.stroke();
+      }
+    }
+ 
+    var previousSelectedCircle;
+ 
+    function canvasClick(e) {
+
+      // 取得画布上被单击的点
+      var clickX = e.pageX - canvas.offsetLeft;
+      var clickY = e.pageY - canvas.offsetTop;
+
+      //alert(clickX+':'+clickY)
+ 
+      // 查找被单击的圆圈
+      for(var i=circles.length-1; i>=0; i--) {
+        var circle = circles[i];
+        //使用勾股定理计算这个点与圆心之间的距离
+        var distanceFromCenter = Math.sqrt(Math.pow(circle.x - clickX, 2)
+            + Math.pow(circle.y - clickY, 2))
+        // 判断这个点是否在圆圈中
+        if (distanceFromCenter <= circle.radius) {
+          // 清除之前选择的圆圈
+          if (previousSelectedCircle != null) previousSelectedCircle.isSelected = false;
+          previousSelectedCircle = circle;
+           
+          //选择新圆圈
+          circle.isSelected = true;
+ 
+          // 使圆圈允许拖拽
+          isDragging = true;
+ 
+          //更新显示
+          drawCircles();
+ 
+          //停止搜索
+          return;
+        }
+      }
+    }
+ 
+    //在某个范围内生成随机数
+    function randomFromTo(from, to) {
+      return Math.floor(Math.random() * (to - from + 1) + from);
+    }
+ 
+    var isDragging = false;
+ 
+    function stopDragging() {
+      isDragging = false;
+    }
+ 
+    function dragCircle(e) {
+      // 判断圆圈是否开始拖拽
+      if (isDragging == true) {
+        // 判断拖拽对象是否存在
+        if (previousSelectedCircle != null) {
+          // 取得鼠标位置
+          var x = e.pageX - canvas.offsetLeft;
+          var y = e.pageY - canvas.offsetTop;
+ 
+          // 将圆圈移动到鼠标位置
+          previousSelectedCircle.x = x;
+          previousSelectedCircle.y = y;
+ 
+         // 更新画布
+         drawCircles();
+        }
+      }
+    }
+
+    function confirmOrder(){
+      // 遍历今天下单所有圆圈
+      results = []
+      for(var i=0; i<circles.length; i++) {
+        var circle = circles[i];
+        //今天下单is_now==1
+        if(circle.x < 1180 && circle.is_now==1){
+          result = [circle.x,circle.y]
+          results.push(result)
+        }
+      }
+      //console.log(results);
+      ajax({
+        url: "http://127.0.0.1:8000/polls/take_order_save/", //请求地址
+        type: "POST",                   //请求方式
+        data: { list_poits: results},   //请求参数
+        dataType: "json",
+        success: function (response, xml) {
+            // 此处放成功后执行的代码
+            alert(response);
+        },
+        fail: function (status) {
+            // 此处放失败后执行的代码
+            alert("服务器错误:"+status)
+            console.log(status);
+        }
+    });
+
+    }
+
+    ajax({
+        url: "http://127.0.0.1:8000/polls/take_order_data/", //请求地址
+        type: "POST",                       //请求方式
+        dataType: "json",
+        success: function (response, xml) {
+          // 此处放成功后执行的代码
+          var data = JSON.parse(response); 
+          console.log(data.orders);
+          for(var i=0; i<data.orders.length; i++) {
+            addRandomCircle(
+              parseInt(data.orders[i].point[0]),
+              parseInt(data.orders[i].point[1]),
+              0,//历史
+              parseInt(data.orders[i].weekday)
+              )
+          }
+        },
+        fail: function (status) {
+            // 此处放失败后执行的代码
+            alert("服务器错误:"+status)
+            console.log(status);
+        }
+    });
+
+    function ajax(options) {
+        options = options || {};
+        options.type = (options.type || "GET").toUpperCase();
+        options.dataType = options.dataType || "json";
+        var params = formatParams(options.data);
+
+        //创建 - 非IE6 - 第一步
+        if (window.XMLHttpRequest) {
+            var xhr = new XMLHttpRequest();
+        } else { //IE6及其以下版本浏览器
+            var xhr = new ActiveXObject('Microsoft.XMLHTTP');
+        }
+
+        //接收 - 第三步
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                var status = xhr.status;
+                if (status >= 200 && status < 300) {
+                    options.success && options.success(xhr.responseText, xhr.responseXML);
+                } else {
+                    options.fail && options.fail(status);
+                }
+            }
+        }
+
+        //连接 和 发送 - 第二步
+        if (options.type == "GET") {
+            xhr.open("GET", options.url + "?" + params, true);
+            xhr.send(null);
+        } else if (options.type == "POST") {
+            xhr.open("POST", options.url, true);
+            //设置表单提交时的内容类型
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(params);
+        }
+    }
+    //格式化参数
+    function formatParams(data) {
+        var arr = [];
+        for (var name in data) {
+            arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]));
+        }
+        arr.push(("v=" + Math.random()).replace(".",""));
+        return arr.join("&");
+    }
+ </script>
+</head>  
+ 
+<body>
+ 
+  <canvas id="canvas" width="1200" height="800" style="background: url({% static 'img/36.jpg' %}) center;background-size: 1200px 800px;background-repeat:no-repeat;">
+  </canvas>
+ 
+  <div>
+    请输入用餐人数：<input type="text" id="dish_number">
+    <button onclick="startOrderdishes()">开始点餐</button>
+    <button onclick="clearCanvas()">清空再来</button>
+    <button onclick="randomOne()">随便来一个</button>
+    <button onclick="confirmOrder()">保存今日数据</button>
+   <!--  <button onclick="historyOrder()">History</button> -->
+  </div>
+  
+</body>
+</html>

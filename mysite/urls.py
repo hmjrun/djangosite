@@ -19,6 +19,8 @@ from django.contrib import admin
 #tastypie
 from tastypie.api import Api
 from test_tastypie.api.resources import EntryResource,UserResource
+from alipay_py import urls as alipay_urls
+
 
 v1_api = Api(api_name='v1')
 v1_api.register(EntryResource())
@@ -28,6 +30,8 @@ urlpatterns = [
 	url(r'^polls/',include('polls.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^alipayModel/',include('alipayModel.urls')),
+    url(r'^alipay/',include(alipay_urls)),
+
     #tastypie
     url(r'^api/',include(v1_api.urls)),
     url(r'^test_tastypie/', include('test_tastypie.urls',namespace="test_tastypie")),

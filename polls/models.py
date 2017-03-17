@@ -28,3 +28,9 @@ class Chioce(models.Model):
 
 	def __str__(self):
 		return self.choice_text
+
+class Order(models.Model):
+	weekday = models.IntegerField(default=0)
+	point_x = models.CharField(max_length=20)
+	point_y = models.CharField(max_length=20)
+	order_date = models.DateTimeField()

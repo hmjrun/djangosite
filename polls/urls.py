@@ -1,5 +1,4 @@
 from django.conf.urls import url
-123
 from . import views
 app_name = 'polls'
 urlpatterns = [
@@ -11,4 +10,11 @@ urlpatterns = [
 	url(r'^(?P<pk>[0-9]+)/results/$',views.ResultsView.as_view(),name='results'),
 	# ex: /polls/5/vote
 	url(r'^(?P<question_id>[0-9]+)/vote/$',views.vote,name='vote'),
+
+	# ex: /polls/order
+	url(r'^take_order/$',views.take_order,name='take_order'),
+
+	url(r'^take_order_data/$',views.take_order_data,name='take_order_data'),
+
+	url(r'^take_order_save/$',views.save_order,name='save_order'),
 ]

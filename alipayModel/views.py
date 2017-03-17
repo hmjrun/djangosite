@@ -11,7 +11,7 @@ alipayTool = alipay.alipay(
 				#支付宝身份ID
                 partner="2088121136801926",  
                 #支付宝生成的key
-                key="",  
+                key="j57lno9gjeegqu3vazgwred8689vuazi",  
                 #商家支付宝帐号（邮箱）
                 #sellermail="zhangshuo@hanyunhk.cn",  
                 #"seller_id"="2088121136801926"
@@ -69,33 +69,14 @@ def buy_rsa(request,goods_id):
 		'seller_id':'2088121136801926',
 		'product_code':'QUICK_WAP_PAY'
 	}
-
 	p = OrderedDict(z)
 
-	
-
 	params = OrderedDict(sorted(z.items(), key=lambda t: t[0]))
-	# r = Record_trade.objects.create(
-	# 	out_trade_no	=	params['out_trade_no'],
-	# 	trade_subject	=	params['subject'],
-	# 	trade_body		=	params['body'],
-	# 	trade_total_fee	=	params['total_amount'])
 	pp = json.dumps(params)
 	url = alipayToolRsa.createPayForm(pp)
-
-	# context = {
-	# 	'app_id'	:	alipayToolRsa.conf['app_id'],
-	# 	'method'	:	alipayToolRsa.conf['method'],
-	# 	'charset'	:	alipayToolRsa.conf['charset'],
-	# 	'sign_type'	:	alipayToolRsa.conf['sign_type'],
-	# 	'timestamp'	:	alipayToolRsa.conf['timestamp'],
-	# 	'biz_content':	alipayToolRsa.conf['biz_content'],
-	# 	'sign'		:	alipayToolRsa.conf['sign'],
-	# 	'version'	:	alipayToolRsa.conf['version'],
-	# }
-	return HttpResponse(url)
-	#return HttpResponse('''<a href="'''+url+'''">confirm</a>''')
-	#return render(request,'alipayModel/comfirm_pay.html',context)
+	
+	return HttpResponse('''<a href="'''+url+'''">confirm</a>''')
+	
 
 def notifyUrl(request):
 	rlt=alipayTool.notifiyCall(f,verify=True)  

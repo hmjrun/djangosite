@@ -10,7 +10,7 @@
 		<li>
 			
 			{{ goods.goods_title }} -- {{ goods.goods_subject }} --- {{ goods.goods_price }}元/个---
-			<a href="{% url 'alipayModel:buy' goods.id %}">Buy it</a>
+			<a href="/alipayModel/{{ goods.id }}/buy/">Buy it</a>
 		</li>
 
 	{% endfor %}
@@ -23,7 +23,7 @@
 		<li>
 			
 			{{ goods.goods_title }} -- {{ goods.goods_subject }} --- {{ goods.goods_price }}元/个---
-			<a href="{% url 'alipayModel:buy_rsa' goods.id %}">Buy it</a>
+			<a href="/alipayModel/{{ goods.id }}/buy_rsa/">Buy it</a>
 		</li>
 
 	{% endfor %}
